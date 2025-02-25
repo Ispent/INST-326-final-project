@@ -1,0 +1,35 @@
+Hello and welcome to my credit card payment calculator! This program helps you understand your credit card payments by calculating key details like the minimum payment, interest charged, the time required to pay off your balance based on different payment strategies, and the amount of time you'll be above different credit line utilization percentages.
+
+**How to Use**
+The program takes three required command-line arguments: a balance amount, an APR integer (expressed as a number between 0 and 100) and a credit line amount (expressed as a positive integer). It also allows for the following optional arguments: --payment (the desired monthly payment) and --fees (the amount of monthly fees that the credit card requires). 
+
+Example of Basic Usage:
+python credit_card.py 15_000 10 17_000
+Calculates the minimum payment and time to pay off the balance.
+
+Example of Usage with a Target Monthly Payment:
+python3 credit_card.py 15_000 10 17_000 --payment 300
+Estimates how long it will take to pay off the balance with a $300 monthly payment.
+
+Example of Usage with a Target Monthly Payment and Monthly Fees:
+python3 credit_card.py 15_000 10 17_000 --payment 340 --fees 20
+Estimates how long it will take to pay off the balance with a $340 monthly payment and considers a $10 monthly fee in the calculation.
+
+**How It Works**
+
+The program tracks:
+- Months needed to pay off the balance.
+- How long the balance remains above 25%, 50%, and 75% of the credit limit.
+- If your target payment is too low, the program will notify you and exit the program.
+
+Expected Output:
+- Recommended minimum payment
+- Months required to pay off the balance
+- Time spent above key balance thresholds
+
+Errors & Warnings:
+- A negative balance triggers an error
+- APR must be between 1 and 100
+- A target payment below the minimum results in an exit message
+
+This tool is intended to help you manage credit card debt more effectively so you can make informed financial decisions!
