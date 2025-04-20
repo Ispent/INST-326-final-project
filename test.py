@@ -23,3 +23,10 @@ class TestCard:
         # tests the string representation of cards
         card = Card('Diamonds', '2')
         assert str(card) == '2 of Diamonds'
+
+class TestDeck:
+    
+    def test_addToDeck(self):
+        pass
+
+
