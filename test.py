@@ -28,6 +28,8 @@ class TestCard:
 class TestDeck:
     
     def test_add_to_deck(self):
+        # tests functionality to add a card
+
         deck = Deck()
         card = Card('Hearts', '8')
         deck.add_to_deck(card)
@@ -36,6 +38,7 @@ class TestDeck:
         assert deck.cards[0] == card
 
     def test_peek_deck(self):
+        # tests peek functionarlity of deck
         deck = Deck()
         card = Card("Diamonds", "Jack")
 
@@ -44,6 +47,7 @@ class TestDeck:
         assert deck.peek() == card
 
     def test_peek_empty_deck(self):
+        # ensures Error is raised when deck is empty
         deck = Deck()
 
         with pytest.raises(IndexError):
