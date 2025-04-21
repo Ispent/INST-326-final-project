@@ -1,5 +1,6 @@
 import pytest
 from cards import Card
+from deck import Deck
 
 class TestCard:
 
@@ -26,7 +27,28 @@ class TestCard:
 
 class TestDeck:
     
-    def test_addToDeck(self):
-        pass
+    def test_add_to_deck(self):
+        deck = Deck()
+        card = Card('Hearts', '8')
+        deck.add_to_deck(card)
+
+        assert len(deck) == 1
+        assert deck.cards[0] == card
+
+    def test_peek_deck(self):
+        deck = Deck()
+        card = Card("Diamonds", "Jack")
+
+        deck.add_to_deck(card)
+
+        assert deck.peek() == card
+
+    def test_peek_empty_deck(self):
+        deck = Deck()
+
+        with pytest.raises(IndexError):
+            deck.peek()
+        
+
 
 
