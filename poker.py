@@ -20,14 +20,21 @@ notes:
         - pair
         - high card 
 
-        
     - tie logic
         - highest value combo of five cards within the seven available cards will win 
             - if the main hand occurs in a tie, kickers are utilized to break ties
             - highest value of unused cards
             - if everything fails and all cards are the valued the same, the pot will be split
 
-    
+    - turn logic
+        - within a turn, the player will have the option to
+            1. fold - forfeit the hand, give up essentially
+            2. check - stand your hand without any bets made
+                - only available if other player hasnt bet
+            3. bet - first person to money in the pot in this round
+            4. call - you match the current bet placed by other player
+            5. raise - you increase the current bet, a fixed amount based off the blind
+
     - betting logic
         - planning on limit hold 'em poker
 
@@ -53,7 +60,15 @@ notes:
                 - bet size remains at $2 
 
             turn - when there is four cards present 
+                - big bet is possible now 
 
             river - final card is now dealt
+                - last chance to make a bet
+
+            ::essentially
+                - round 1/2 can raise by the amount of the small blind
+                - round 3/4 can raise/bet by the big blind amount
+
+        
 
 """
