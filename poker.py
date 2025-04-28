@@ -69,6 +69,52 @@ notes:
                 - round 1/2 can raise by the amount of the small blind
                 - round 3/4 can raise/bet by the big blind amount
 
-        
+    - so with this hwat do i even do ???
+        - game order
+            - 
 
+        - code order
+            - initialize deck
+                - add appropriate amount of cards to deck
+
+            - initalize player
+                - crate player profile and dealer profile
+                - assign blind object (?)
+                    - create a blind object to keep track of bets (?) -- idk if neccesary
+            
+            - shuffle deck and deal cards
+                - 2 each to player's hand
+            
+            - bet round
+                - enfore blinds
+                - player can either fold, call, raise, or check
+            
+            - repeat until all cards are shown of bet rounds
+
+            - if at least 2 players remaining at the final round, reveal hands
+                - compare the strength of cards
+                    - compare card structure against like a regex (?) - or utilize a tuple 
+
+            **- deck management
+              - ensure after dealing a card to a player/dealer, the card object is properly removed from the top of the deck
+                - add a remove top/deal function to deck
+                - apparently u burn cards but idk when i have to look into that
+
+        - money logic
+            - ideally contain a "stack" of chips
+            - each chip will hold a numerical value
+            - can be bet/freely exchanged with the dealer for differnet chip valuations
+
+            - but reallistically for now will just hold numerical values
+
+            - side pots (?) for two player 
+
+        - round progression
+            - burn - flop ( draw - draw - draw) - bets - burn - turn ( draw ) - bet - burn - river ( draw ) - bet - final 
+
+        - hand evaluation (?????)
+            - actually how the fuck
+
+        
+              
 """
