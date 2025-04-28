@@ -62,14 +62,15 @@ class TestDeck:
         assert len(deck) == 52
         
     def test_shuffle_deck(self):
+        # tests shuffling of the deck by comparing two deck objects against each other
         deck1 = Deck()
         deck2 = Deck()
 
         deck1.initialize_deck()
         deck2.initialize_deck()
 
+        assert deck1 == deck2
         deck2.shuffle_deck()
-
         assert deck1 != deck2
 
 

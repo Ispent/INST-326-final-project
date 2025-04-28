@@ -28,4 +28,9 @@ class Card:
     # returns readable string representation of a card
     return f"{self.value} of {self.suit}"
   
+  def __eq__(self, other):
+    if not isinstance(other, Card):
+      return NotImplemented
+    return self.suit == other.suit and self.value == other.value
+  
   
