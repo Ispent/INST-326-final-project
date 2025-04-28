@@ -52,7 +52,26 @@ class TestDeck:
 
         with pytest.raises(IndexError):
             deck.peek()
+    
+    def test_initalize_deck(self):
+        # ensures the length of deck is in line with request amount of decks
+        # could/should lowkey flesh this out more
+        deck = Deck()
+        deck.initialize_deck(1)
+
+        assert len(deck) == 52
         
+    def test_shuffle_deck(self):
+        deck1 = Deck()
+        deck2 = Deck()
+
+        deck1.initialize_deck()
+        deck2.initialize_deck()
+
+        deck2.shuffle_deck()
+
+        assert deck1 != deck2
+
 
 
 

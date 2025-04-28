@@ -114,7 +114,30 @@ notes:
 
         - hand evaluation (?????)
             - actually how the fuck
-
-        
-              
+           
 """
+from deck import Deck
+from cards import Card
+import itertools
+
+def start_game():
+    deck = Deck()
+    deck.initialize_deck()
+    print(deck)
+
+    deck.shuffle_deck()
+    print(deck)
+
+start_game()
+
+
+
+
+def hand_finder():
+    test_list = [1, 2, 3, 4, 5, 6, 7]
+
+    for reply in itertools.combinations(test_list, 5):
+        print(reply)
+
+
+

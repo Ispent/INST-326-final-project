@@ -1,4 +1,6 @@
 from cards import Card
+import itertools
+import random 
 
 class Deck:
     """ 
@@ -10,13 +12,20 @@ class Deck:
 
     def __init__(self):
         self.cards = []
+        self.suitList = ['Hearts', 'Spades', 'Diamonds', 'Clubs']
+        self.valueList = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'Jack', 'Queen', 'King', 'Ace']
 
     def __str__(self):
-        for card in self.cards:
-            return card
+        return ', '.join(str(card) for card in self.cards)
         
     def __len__(self):
         return len(self.cards)
+    
+    def __eq__(self, other):
+        if not isinstance(other, Deck):
+            return NotImplemented
+        
+        return self.cards == other.cards
 
     def add_to_deck(self, card):
         """
@@ -43,3 +52,11 @@ class Deck:
             return self.cards[-1]
         else:
             raise IndexError('Cannot peek empty deck')
+        
+    def initialize_deck(self, deck_count=1):
+        for suit, value in itertools.product(self.suitList, self.valueList):
+            for i in range(0, deck_count):
+                self.cards.append(Card(suit, value))
+    
+    def shuffle_deck(self):
+        random.shuffle(self.cards)
