@@ -60,3 +60,7 @@ class Deck:
     
     def shuffle_deck(self):
         random.shuffle(self.cards)
+
+    def deal_card(self):
+        # removed top card in deck, and returns it
+        return self.cards.pop()

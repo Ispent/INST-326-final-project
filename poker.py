@@ -134,11 +134,23 @@ def initialize_player():
 class PokerGame:
     def __init__(self, player):
         self.player = player
+        self.other_player = Player('dealer', 'big')
         self.deck = Deck()
         self.deck.initialize_deck()
         self.deck.shuffle_deck()
         self.pot = 0
     
+    def round(self):
+        pass
+
+    def switch_blinds(self):
+        # this inherently locks the game into two players
+        # conceptually i think having a list of players with a two pointers at each location
+        # would be much better for tracking blind status
+        pass
+
+        
+
     def bet_round(self):
         p_bet = self.player.bet(501)
         self.pot += p_bet

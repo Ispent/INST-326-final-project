@@ -1,11 +1,11 @@
 
 class Player:
-    def __init__(self, name, is_dealer=False):
+    def __init__(self, name, blind='small'):
         # i guess 500 bucks is enough to start off with
         self.name = name
         self.balance = 500
         self.hand = []
-        self.is_dealer = is_dealer
+        self.blind = blind
 
     def __repr__(self):
         return (f"{'player name:':<15} {self.name:}\n" 
