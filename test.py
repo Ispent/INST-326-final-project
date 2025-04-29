@@ -1,6 +1,7 @@
 import pytest
 from cards import Card
 from deck import Deck
+from player import Player
 
 class TestCard:
 
@@ -24,6 +25,7 @@ class TestCard:
         # tests the string representation of cards
         card = Card('Diamonds', '2')
         assert str(card) == '2 of Diamonds'
+
 
 class TestDeck:
     
@@ -74,5 +76,66 @@ class TestDeck:
         assert deck1 != deck2
 
 
+class TestPlayer:
+    
+    def test_init(self):
+        player = Player('patty')
 
+        assert player.name == 'patty'
+        assert player.balance == 500
+        assert player.hand == []
+
+    def test_bet(self):
+        player = Player('patty')
+
+        p_bet = player.bet(50)
+
+        assert p_bet == 50 
+        assert player.balance == 500 - p_bet
+
+    def test_bet_edge(self):
+        player = Player('patty')
+
+        with pytest.raises(ValueError):
+            player.bet(501)
+
+    def test_fold(self):
+        # this seems so cursed for no reason
+        player = Player('patty')
+
+        card1 = Card('Diamonds', 'Jack')
+        card2 = Card('Clubs', '4')
+        player.hand = [card1, card2]
+
+        player.fold()
+
+        assert player.hand == []
+
+    # this one feels ridiculous
+    """
+    def test_check(self):
+        # ???? 
+        pass
+    """
+
+    def test_call(self):
+        # again this just feels like a repeat of the bet function
+        player = Player('patty')
+
+        p_bet = player.call(50)
+
+        assert p_bet == 50 
+        assert player.balance == 500 - p_bet
+
+    def test_raise(self):
+        player = Player('patty')
+
+        p_bet = player.raise_bet(100, 100)
+
+        assert p_bet == 200
+        assert player.balance == 500 - p_bet
+
+
+class TestGame:
+    pass
 

@@ -93,7 +93,7 @@ notes:
 
             - if at least 2 players remaining at the final round, reveal hands
                 - compare the strength of cards
-                    - compare card structure against like a regex (?) - or utilize a tuple 
+                    - compare card structure against like a regex (?) - or utilize a tuple - hell no wtf
 
             **- deck management
               - ensure after dealing a card to a player/dealer, the card object is properly removed from the top of the deck
@@ -118,20 +118,43 @@ notes:
 """
 from deck import Deck
 from cards import Card
+from player import Player
 import itertools
 
-def start_game():
-    deck = Deck()
-    deck.initialize_deck()
-    print(deck)
 
-    deck.shuffle_deck()
-    print(deck)
+def initialize_player():
+    while True:
+        # this lowkey seems more annoying than useful but whatever
+        name = input("Enter name of player: ")
 
-start_game()
-
+        if (input(f'Are you sure you want to be named {name}? (y/n): ')).lower() == 'y':
+            return Player(name)
 
 
+class PokerGame:
+    def __init__(self, player):
+        self.player = player
+        self.deck = Deck()
+        self.deck.initialize_deck()
+        self.deck.shuffle_deck()
+        self.pot = 0
+    
+    def bet_round(self):
+        p_bet = self.player.bet(501)
+        self.pot += p_bet
+
+    
+            
+def main():
+    player1 = initialize_player()
+    pokergame = PokerGame(player1)
+    print(pokergame.player)
+    pokergame.bet_round()
+
+    print(pokergame.pot)
+
+
+main()
 
 def hand_finder():
     test_list = [1, 2, 3, 4, 5, 6, 7]

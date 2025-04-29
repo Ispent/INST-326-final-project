@@ -7,6 +7,9 @@ class Player:
         self.hand = []
         self.is_dealer = is_dealer
 
+    def __repr__(self):
+        return (f"{'player name:':<15} {self.name:}\n" 
+                f"{'player balance:':<15} ${self.balance:.2f}\n")
 
 
     def bet(self, amount):
