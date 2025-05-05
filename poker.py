@@ -139,21 +139,55 @@ class PokerGame:
         self.deck.initialize_deck()
         self.deck.shuffle_deck()
         self.pot = 0
+        self.community_cards = []
     
     def round(self):
         pass
 
-    def switch_blinds(self):
-        # this inherently locks the game into two players
-        # conceptually i think having a list of players with a two pointers at each location
-        # would be much better for tracking blind status
-        pass
+    def initialize_round(self):
+        self.deck.initialize_deck()
+        self.deck.shuffle_deck()
+        self.assign_blinds()
+        self.pot = 0
+        self.community_cards = []
 
-        
+    def assign_blinds(self):
+        if self.player.blind == 'small':
+            self.player.blind = 'big'
+            self.other_player.blind = 'small'
+        else:
+            self.player.blind = 'small'
+            self.player.blind = 'big'
+
+    def inital_deal(self):
+        self.player.hand = [self.deck.deal_card(), self.deck.deal_card()]
+        self.other_player.hand = [self.deck.deal_card(), self.deck.deal_card()]
+    
 
     def bet_round(self):
-        p_bet = self.player.bet(501)
-        self.pot += p_bet
+        highest_bet = 0
+
+        while True:
+            print(f"Pot: ${self.pot}"
+                  f"Your hand: {self.player.hand}"
+                  f"Community Cards: {self.community_cards}")
+            
+            action = input('what would you like to do (fold/call/check/raise)').lower()
+
+            if action == 'fold':
+                print('You have folded, dealer wins')
+                return self.player.fold()
+            
+            elif action == 'check':
+                if highest_bet > 0:
+                    print(f'You cannot check, you must match the current bet of {highest_bet}')
+                else:
+                    print('You check')
+                    return self.player.check()
+            
+            elif action == 'call':
+                call_amount = highest_bet - self.player.current_bet
+            
 
     
             

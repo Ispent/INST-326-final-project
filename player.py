@@ -6,6 +6,7 @@ class Player:
         self.balance = 500
         self.hand = []
         self.blind = blind
+        self.current_bet = 0
 
     def __repr__(self):
         return (f"{'player name:':<15} {self.name:}\n" 
@@ -17,25 +18,27 @@ class Player:
             raise ValueError('too broke')
         
         self.balance -= amount
+        self.current_bet += amount
         return amount
     
     def fold(self):
         self.hand = []
-        return 'player has folded'
+        self.current_bet = 0
+        return 'fold'
 
     def check(self):
         # i dont think i even need this ??
         return 'check'
     
-    def call(self, current_bet):
-        return self.bet(current_bet)
+    def call(self, amount_to_call):
+        return self.bet(amount_to_call)
     
     def raise_bet(self, current_bet, raise_amount):
         new_bet = current_bet + raise_amount
-        if self.balance < new_bet:
+        if self.balance < new_bet - self.current_bet:
             raise ValueError('broke')
         
-        return self.bet(new_bet)
+        return self.bet(new_bet - self.current_bet)
 
 
 
