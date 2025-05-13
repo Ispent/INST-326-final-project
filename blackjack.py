@@ -1,4 +1,5 @@
 import random
+import itertools
 """
 notes for order of game:
 
@@ -34,11 +35,17 @@ notes for order of game:
 
 #deck of cards/ hands
 class Deck: 
-    values = [2, 3, 4, 5, 6, 7, 8, 9, 10, 2, 3, 4, 5, 6, 7, 8, 9, 10, 2, 3, 4, 5, 6, 7, 8, 9, 10, 2, 3, 4, 5, 6, 7, 8, 9, 10,
-        'J', 'Q', 'K', 'A', 'J', 'Q', 'K', 'A', 'J', 'Q', 'K', 'A', 'J', 'Q', 'K', 'A']
+    values = ["2", "3", "4", "5", "6", "7", "8", "9", "10",
+              "2", "3", "4", "5", "6", "7", "8", "9", "10", 
+              "2", "3", "4", "5", "6", "7", "8", "9", "10", 
+              "2", "3", "4", "5", "6", "7", "8", "9", "10",
+            "J", "Q", "K", "A", "J", "Q", "K", "A", "J", "Q", "K", "A", "J", "Q", "K", "A"]
     
     def __init__(self):
         self.cards = []
+        
+    def __len__(self):
+        return len(self.cards)
         
     def fill(self, decks):
         for i in range(decks):
@@ -81,18 +88,18 @@ class Player:
         
     def resetHand(self):
         self.hand = []
-        
+    @property   
     def aces(self):
         return len([card for card in self.hand if card.value == "A"])
-    
+    @property
     def score(self):
         return sum([card.score for card in self.hand])
-    
+    @property
     def score_aces(self):
         for ace in range(self.aces):
             if self.score < 12:
                 self.score += 10
-            return self.score
+        return self.score
         
     def bust(self):
         if self.score_aces > 21:
@@ -131,7 +138,7 @@ class Dealer(Player):
                 print(card)
         else:
             print(self.hand[0])
-            print("X")
+            print("Face down card")
             
 #deals player and dealer hands
 class Blackjack:
@@ -142,7 +149,7 @@ class Blackjack:
         self.player_turn = True
         
     def deal(self):
-        if len(self.deck) < 10:
+        if len(self.deck) < 104:
             print ("shuffling...")
             self.deck.clear()
             self.deck.fill(6)
@@ -168,7 +175,7 @@ class Blackjack:
             print(f"You choose to stand on {player.score_aces}")
         
     def checkBust(self, player):
-        if player.isBusted():
+        if player.bust():
             if(isinstance(player, Gambler)):
                 print("Bust")
                 self.players_turn = False
@@ -189,24 +196,67 @@ class Blackjack:
             self.push(player)
         else:
             self.playerlost(player)
-                
-def dealCard(turn):
-    card = random.choice(Deck)
-    turn.append(card)
-    Deck.remove(card)
+            
+    def reset(self):
+        for player in self.players:
+            player.reset()
+        self.player_bet = 0
     
-#calculate total of player and dealer hands
-def total(turn):
-    total = 0
-    face = ['J', 'Q', 'K']
-    for card in turn:
-        if card in range(1,11):
-            total += card
-        elif card in face:
-            total +=10 
-        else:
-            if total > 11:
-                total += 1
+    def replay(self, player):
+        again = None
+        while again != "y" or again != "n":
+            again = input ("Play again? Y/N:")
+            if again.lower == "y":
+                return True
+            elif again.lower == "n":
+                print(f"You walk away with {player.chips}.")
             else:
-                total += 11
-    return total
+                print("Invalid input. Try again.")
+                
+    #initiates blackjack game
+    def play(self):
+        print("Welcome to Blackjack")
+        self.deck = Deck()
+        player = Gambler(500)
+        dealer = Dealer()
+        self.players = [player, dealer]
+        self.deck.fill(6)
+        self.deck.shuffle()
+        running = True
+        
+        while running:
+            if self.players[0].chips == 0:
+                print("The casino took all your money. Get out.")
+                break
+        self.player_bet = player.bet()
+        self.deal()
+        dealer.show()
+        player.getHand()
+        while self.players_turn:
+            self.player_choice(player)
+        if not player.bust:
+            dealer.show()
+            while not self.players_turn:
+                if dealer.score_aces < 17:
+                   print("Dealer hit")
+                   self.hit(dealer)
+                elif dealer.score_aces >= 17 and not dealer.bust():
+                    print(f"Dealer stands with {dealer.score_aces}")
+                    break
+                elif dealer.bust:
+                    self.playerwon(player)
+                    break
+            if not dealer.bust:
+                self.compare(player, dealer)
+        again = self.replay()
+        if not again:
+            running = False
+        self.players_turn = False
+        self.reset()
+        
+def main():
+    bj = Blackjack()
+    bj.play()
+    
+if __name__ == "__main__":
+    main()
