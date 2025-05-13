@@ -212,20 +212,28 @@ class PokerGame:
                     
                     elif action == 'call':
                         call_amount = highest_bet - self.player.current_bet
-                        self.player.balance -= call_amount
-                        self.player.current_bet += call_amount
+                        try:
+                            self.player.call(call_amount)
+                        except ValueError:
+                            print('Not enough balance to call.')
+                            return self.player.fold()
                         self.pot += call_amount
                         print(f'you called ${call_amount}')
 
                     elif action == 'raise':
-                        raise_amount = int(input('Enter raise amount: '))
-
+                        try:
+                            raise_amount = int(input('Enter raise amount: '))
+                        except ValueError:
+                            print('Invalid input. Please enter a number.')
+                            continue
                         total_bet = highest_bet + raise_amount
-                        self.player.balance -= total_bet - self.player.current_bet
-                        self.player.current_bet = total_bet
-                        self.pot += total_bet - highest_bet
+                        try:
+                            self.player.raise_bet(highest_bet, raise_amount)
+                        except ValueError:
+                            print('Not enough balance to raise.')
+                            continue
+                        self.pot += total_bet - self.player.current_bet + raise_amount
                         highest_bet = total_bet
-
                         print(f'You raised to ${total_bet}')
                     
                     else:

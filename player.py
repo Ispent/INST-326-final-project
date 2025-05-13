@@ -1,4 +1,3 @@
-
 class Player:
     def __init__(self, name, blind='small'):
         # i guess 500 bucks is enough to start off with
@@ -40,10 +39,16 @@ class Player:
         
         return self.bet(new_bet - self.current_bet)
 
+    def reset_bet(self):
+        self.current_bet = 0
+
+    def win_pot(self, amount):
+        self.balance += amount
 
 
-    
-    
-    
 
-        
+
+
+
+
+
