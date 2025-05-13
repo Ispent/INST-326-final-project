@@ -31,7 +31,6 @@ class TestDeck:
     
     def test_add_to_deck(self):
         # tests functionality to add a card
-
         deck = Deck()
         card = Card('Hearts', '8')
         deck.add_to_deck(card)
