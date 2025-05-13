@@ -1,11 +1,4 @@
-"""A template for a python script deliverable for INST326.
-
-Driver: Brenda Ngaba
-Navigator: Abdoullah Sankoh, and Ibrahim Sesay
-Assignment: Template INST326
-Date: 1_24_25
-
-Challenges Encountered: ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+""" Program that performs rock, paper, scissors and determines the winner.
 """
 
 import sys
@@ -13,46 +6,79 @@ import argparse
 import os
 
 def determine_winner(p1, p2):
-    
-    """ Determines which hand sign wins the round of rock, paper, scissors.
-    Args:
-        p1: Player 1's choice between rock, paper and scissors.
-        p2: Player 2's choice between rock, paper and scissors.
-    Returns: 
-        Either the player who wins the round a tie if there is one.
-
-    """
     #insert code and docstrings here
-    p1_choice = input("Player 1, please choose rock, paper or scissors (r,p,s).")
-    p2_choice = input("Player 2, please choose rock, paper or scissors (r,p,s).")
-   
-    r = 'rock'
-    p = 'paper'
-    s = 'scissors'
-    
-    p1_choice1 = p1_choice
-    p2_choice1 = p2_choice
+    """ Determines which player wins rock, paper, scissors.
+    Args:
+        p1 (str): Player 1's choice between rock, paper and scissors, represented as (r,p,s).
+        p2 (str): Player 2's choice between rock, paper and scissors, represented as (r,p,s).
+    Returns: 
+        Either 'Player1', 'Player2 or 'tie' if there is one.
+    """
 
-    
-    if p1_choice1 == 's' and p2_choice1 == 'r':
-        return 'player2'
-    elif p1_choice1 == 'p' and p2_choice1 == 's':
-        return 'player2'
-    elif p1_choice1 == 's' and p2_choice1 == 'p':
-        return 'player1'
-    elif p1_choice1 == 'p' and p2_choice1 == 'r':
-        return 'player1'
-    elif p1_choice1 == 'r' and p2_choice1 == 'p':
-        return 'player2'
-    else:
-        print("There is a tie.")
+    #determining which player wins based on their chosen hand sign
+    if p1 == p2:
         return 'tie'
+    elif (p1 == 'r' or p1 == 'rock') and (p2 == 's' or p2 == 'scissors'): #ensuring both spelt out an shorthand versions are valid input
+        return 'player1'
+    elif (p1 == 's' or p1 == 'scissors') and (p2 == 'p' or p2 == 'paper'):
+        return 'player1'
+    elif (p1 == 'p' or p1 == 'paper') and (p2 == 'r' or p2 == 'rock'):
+        return 'player1'
+    else:
+        return 'player2'
+        
     
-    pass
-    '''
 def main(player1_name, player2_name):
     #insert code and docstrings here
+    """ Handles main game logic for rock, paper, scissors.
+
+    Asks the user to input both player's hand shape, clears the screen
+    after each input, and calls the determine_winner function to revealsthe winner.
+
+    Args:
+        player1_name (str): The name of player 1, inserted at command line.
+        player2_name (str): The name of Player 2, inserted at command line.
+
+    Returns:
+        None
+    """
+
+     #asking user to input both player's hand sign
+    p1_choice = input(f"Enter {player1_name}'s hand shape (r,p,s).\n")
+    
+    #validating input
+    while p1_choice not in ['r', 'rock', 'p', 'paper', 's', 'scissors']:
+        print("That response was not understood. Please enter rock, paper, or scissors (r, p, s).")
+        p1_choice = input(f"Enter {player1_name}'s hand shape (r,p,s).\n")
+        os.system('cls||clear')
+        
+    
+    p2_choice = input(f"Enter {player2_name}'s hand shape (r,p,s).\n")
+    
+        #validating input
+    while p2_choice not in ['r', 'rock', 'p', 'paper', 's', 'scissors']:
+        print("That response was not understood. Please enter rock, paper, or scissors (r, p, s).")
+        p2_choice = input(f"Enter {player2_name}'s hand shape (r,p,s).\n")
+        
+        os.system('cls||clear')
+        
+    #assigning player's choices to variables p1 and p2 for consistency 
+    p1 = p1_choice
+    p2 = p2_choice 
+    
+    
+    result = determine_winner(p1, p2) #calling on determine winner module
+    
+    #printing the game's results
+    if result == 'tie':
+        print("There is a tie.")
+    elif result == 'player1':
+        print(f"{player1_name} wins!")
+    elif result == 'player2':
+        print(f"{player2_name} wins!")
+    
     pass
+
 
 def parse_args(args_list):
     """Takes a list of strings from the command prompt and passes them through as
@@ -97,4 +123,3 @@ if __name__ == "__main__":
     #You do want to make sure to have minimal code under the 'if __name__ == "__main__":' statement.
 
     main(arguments.p1_name, arguments.p2_name)
-    '''
