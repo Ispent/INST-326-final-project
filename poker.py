@@ -358,8 +358,8 @@ def main():
         
     print(f"\nGame Over! Final balance: ${player1.balance}")
 
-
-main()
+if __name__ == "__main__":
+    main()
 
 def hand_finder():
     test_list = [1, 2, 3, 4, 5, 6, 7]
