@@ -41,7 +41,7 @@ class SlotMachine:
         """ Checks if the player has enough points to play.
     
         Returns:
-            boolean: that's True if the player has enough points.
+            Boolean: True if the player has enough points.
         Side effects:
             Returns to the main menu if the player has insufficient points.
         """
@@ -58,6 +58,21 @@ class SlotMachine:
             short_points = self.spin_cost - self.points
             print(f"Sorry, you need {short_points} more points to play this game.")
             sys.exit() #will return to main when there is a main
+    
+    def start_game(self):
+        """Asks user if they want to play the game.yy
+        
+        Args:
+            None
+        Returns:
+            Boolean: True if player says 'y' or 'yes'.
+        """
+        
+        play = input(f"Would you like to play slots for $10? (y/n): \n")
+
+        return play in ['y', 'yes']
+    
+        
 
     def spin_reels(self):
         """Deducts the spin cost, prompts the player, and simulates reel spinning.
@@ -67,15 +82,14 @@ class SlotMachine:
         Side effects:
             Prints spinning animation and spin result.
         """
-        self.points -= self.spin_cost #subtracting spin cost from users balance 
-        play = input(f"Would you like to play slots for $10? (y/n): \n")
 
         #if user doesnt say yes they return to main menu
-        if play not in ['y' or 'yes']:
+        if not self.start_game(): 
             print("Returning to main menu...")
             time.sleep(.5)
             sys.exit() #will replace w return to main 
-
+            
+        self.points -= self.spin_cost #subtracting spin cost from users balance 
         print(f"You now have ${self.points}.")
         time.sleep(1)
         
@@ -103,7 +117,7 @@ class SlotMachine:
             Updates the player's balance based on the result.
         """
         if spins[0] == spins[1] == spins[2]: #all 3 symbols matching
-            reward = self.symbol_value[spins[0]] * 3
+            reward = ((self.symbol_value[spins[0]] * 3) + 50) #adding an extra $50 for jackpot
             self.points += reward
             return f"🎉 JACKPOT! +${reward}"
         
@@ -124,6 +138,16 @@ class SlotMachine:
         self.points += reward
         return f"Two matching symbols! + ${reward}"
     
+    def play_again(self):
+        """Asks user to play again.
+        Args:
+            None
+        Returns:
+            Boolean: True if player says 'y' or 'yes'.
+        """
+        play_again =  input("Play again? (y/n): \n").strip().lower()
+        return play_again in ['y', 'yes']
+    
     def play(self):
         """Runs the main game loop that allows the player to spin the reel and play again."""
         
@@ -136,11 +160,11 @@ class SlotMachine:
             print(f"Current points: {self.points}\n")
             
             #play again logic
-            play_again =  input("Play again? (y/n): \n").strip().lower()
-            
-            if play_again not in ['y', 'yes']: #if user doesn't choose to play again
+            if not self.play_again(): #if user doesn't choose to play again
                 print(f"Thanks for playing! You have ${self.points} remaining.")
                 break
+
+ 
     
 if __name__ == "__main__":
     #creating an instance of the SlotMachine class

@@ -1,0 +1,40 @@
+*** Welcome to our CLI-based Casino Game ***
+This casino game simulates a casino environment where users can choose between 3 popular casino games: Slots, Poker and Blackjack through a command-line interface.
+
+*** Slot Machine Instructions ***
+In simple slot machine game you will be able to spin the reels and recieve 3 random emoji-based symbols each with a different value.
+🍋: + $10
+🍒: + $20
+🔔: + $30
+💎: + $50
+🍀: + $25
+
+Once you select the slots game you’ll be greeted with a welcome message and asked if you’d like to play. Each round of the game costs a fixed amount of $10, which is deducted from your total balance. Rewards are added to your balance based on the amount of matching symbols present in each spin.
+
+**Examples of Gameplay**
+
+If you spin a JACKPOT:
+🍋 | 🍋 | 🍋
+This is a JACKPOT! You’ll earn triple the symbol's value plus a $50 bonus.
+In this case, you'd get +$80.
+
+If you spin two matching symbols:
+🔔 | 🔔 | 🍀
+Here there are only two matching symbols. You’ll earn the value of the matching symbol times two.
+In this case, you'd get +$60.
+
+If none of the symbols match:
+🍒 | 💎 | 🍋
+Here there are no matching symbols. In this case, you'd get no points.
+
+Game Features
+- Scoring System: Rewards scale based on symbol value and match type.
+- Replay Option: After each spin, you’ll be asked whether you want to play again.
+
+Game Ending:
+
+The game ends when:
+- You decide to stop playing
+- You no longer have enough points to spin
+At the end of the game, you’ll see your final balance and be returned to the main casino interface.
+
