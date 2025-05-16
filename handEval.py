@@ -56,6 +56,8 @@ from itertools import combinations
 
 
 class HandEvaluator:
+    """
+    essentially the engine behind the poker game, will take in the full combination of 2 player cards and 5 community cards, iterate through every possible combination and return the best hand"""
     HAND_RANKS = {
         'HIGH_CARD': (1, "High Card"),
         'PAIR': (2, "One Pair"),
@@ -75,7 +77,7 @@ class HandEvaluator:
     }
 
     def __init__(self):
-        """Initialize the HandEvaluator without cards. Cards will be provided to evaluate method."""
+        """init only the attribute for the best hand"""
         self.best_hand = None
 
     def evaluate(self, cards, return_best_hand=False):
@@ -155,12 +157,16 @@ class HandEvaluator:
         return groups
 
     def value_counts(self, hand):
+        """counts the number of numerical values within the hand
+        returns: dictionary of the counts"""
         counts = {}
         for card in hand:
             counts[card.value] = counts.get(card.value, 0) + 1
         return counts
 
     def suit_counts(self, hand):
+        """counts the number of suits within the hand
+        returns: dictionary of the counts"""
         counts = {}
         for card in hand:
             counts[card.suit] = counts.get(card.suit, 0) + 1
@@ -181,9 +187,12 @@ class HandEvaluator:
         return values == list(range(min(values), min(values) + 5))
     
     def flush_check(self, hand):
+        """based on present suits, will determine if there is a flush or not"""
         return len(set(card.suit for card in hand)) == 1
 
     def check_hand(self, hand):
+        """after going through the baseline checks, will iterate from the highest scoring hand type to the lowest to check hand rank
+        returns: tuple with hand ranking and name"""
         values = sorted([self.VALUES[card.value] for card in hand])  # Keep values sorted for kicker comparison
         value_counts = self.value_counts(hand)
         is_flush = self.flush_check(hand)
