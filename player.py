@@ -33,11 +33,12 @@ class Player:
         return self.bet(amount_to_call)
     
     def raise_bet(self, current_bet, raise_amount):
-        new_bet = current_bet + raise_amount
-        if self.balance < new_bet - self.current_bet:
+        # Need to match current bet first, then add raise amount
+        amount_needed = (current_bet - self.current_bet) + raise_amount
+        if self.balance < amount_needed:
             raise ValueError('broke')
         
-        return self.bet(new_bet - self.current_bet)
+        return self.bet(amount_needed)
 
     def reset_bet(self):
         self.current_bet = 0
