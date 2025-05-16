@@ -78,31 +78,81 @@ class HandEvaluator:
         """Initialize the HandEvaluator without cards. Cards will be provided to evaluate method."""
         self.best_hand = None
 
-    def evaluate(self, cards):
+    def evaluate(self, cards, return_best_hand=False):
         """
         Evaluate all possible 5-card combinations from the given cards
         and return the rank of the best hand.
         
         Args:
             cards (list): A list of 7 Card objects
+            return_best_hand (bool): If True, returns both rank and best 5-card hand
             
         Returns:
-            int: The rank of the best possible hand
+            If return_best_hand is False: int representing the rank of the best hand
+            If return_best_hand is True: tuple of (rank, list of 5 cards)
         """
-        best_rank = self.HAND_RANKS["HIGH_CARD"][0]  # Start with lowest possible rank (just the number)
+        best_rank = self.HAND_RANKS["HIGH_CARD"][0]
+        best_hand = None
         
         # Generate 5-card combinations if more than 5 cards provided
         if len(cards) > 5:
             hands = combinations(cards, 5)
         else:
-            hands = [cards]  # Just use the 5 cards as is
+            hands = [cards]
             
         # Find best possible hand
         for hand in hands:
-            rank = self.check_hand(list(hand))
-            best_rank = max(best_rank, rank)  # Higher rank number is better
-            
+            hand = list(hand)
+            rank = self.check_hand(hand)
+            if rank > best_rank:
+                best_rank = rank
+                best_hand = hand
+            elif rank == best_rank:
+                # If same rank, compare high cards for tiebreaker
+                if self._compare_high_cards(hand, best_hand):
+                    best_hand = hand
+        
+        if return_best_hand:
+            return best_rank, best_hand
         return best_rank
+
+    def _compare_high_cards(self, hand1, hand2):
+        """Compare high cards between two hands for tiebreaking.
+        Returns True if hand1 is better than hand2."""
+        if not hand2:
+            return True
+            
+        # Get counts for both hands
+        counts1 = self.value_counts(hand1)
+        counts2 = self.value_counts(hand2)
+        
+        # Group cards by frequency (4 of a kind, 3 of a kind, pairs, singles)
+        groups1 = self._group_by_frequency(counts1)
+        groups2 = self._group_by_frequency(counts2)
+        
+        # Compare each group from highest frequency to lowest
+        for freq in sorted(set(groups1.keys()) | set(groups2.keys()), reverse=True):
+            values1 = sorted([self.VALUES[v] for v in groups1.get(freq, [])], reverse=True)
+            values2 = sorted([self.VALUES[v] for v in groups2.get(freq, [])], reverse=True)
+            
+            # Compare all values in this frequency group
+            for v1, v2 in zip(values1, values2):
+                if v1 > v2:
+                    return True
+                elif v1 < v2:
+                    return False
+                    
+        return False
+        
+    def _group_by_frequency(self, counts):
+        """Group card values by their frequency.
+        Returns dict mapping frequency to list of values."""
+        groups = {}
+        for value, freq in counts.items():
+            if freq not in groups:
+                groups[freq] = []
+            groups[freq].append(value)
+        return groups
 
     def value_counts(self, hand):
         counts = {}
@@ -117,26 +167,32 @@ class HandEvaluator:
         return counts
 
     def straight_check(self, hand):
+        """Check if the hand contains a straight.
+        
+        Handles both regular straights and Ace-low straights (A-2-3-4-5).
+        """
         values = sorted([self.VALUES[card.value] for card in hand])
-
-        if values == [2, 3, 4, 5, 14]:
+        
+        # Check for Ace-low straight (A-2-3-4-5)
+        if set(values) == {2, 3, 4, 5, 14}:
             return True
         
-        return values == list(range(values[0], values[0] + 5))
+        # Check for regular straight
+        return values == list(range(min(values), min(values) + 5))
     
     def flush_check(self, hand):
         return len(set(card.suit for card in hand)) == 1
 
     def check_hand(self, hand):
-        values = [self.VALUES[card.value] for card in hand]  # Convert to numeric values
+        values = sorted([self.VALUES[card.value] for card in hand])  # Keep values sorted for kicker comparison
         value_counts = self.value_counts(hand)
         is_flush = self.flush_check(hand)
         is_straight = self.straight_check(hand)
         
         # Royal Flush
-        if is_straight and is_flush and max(values) == 14:
+        if is_straight and is_flush and max(values) == 14 and min(values) == 10:
             return self.HAND_RANKS["ROYAL_FLUSH"][0]
-            
+        
         # Straight Flush
         if is_straight and is_flush:
             return self.HAND_RANKS["STRAIGHT_FLUSH"][0]

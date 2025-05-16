@@ -13,8 +13,12 @@ class Player:
 
 
     def bet(self, amount):
+        if not isinstance(amount, (int, float)):
+            raise ValueError('Bet amount must be a number')
+        if amount <= 0:
+            raise ValueError('Bet amount must be positive')
         if self.balance < amount:
-            raise ValueError('too broke')
+            raise ValueError(f'Insufficient balance (${self.balance}) to place bet of ${amount}')
         
         self.balance -= amount
         self.current_bet += amount
@@ -33,10 +37,11 @@ class Player:
         return self.bet(amount_to_call)
     
     def raise_bet(self, current_bet, raise_amount):
-        # Need to match current bet first, then add raise amount
+        if raise_amount <= 0:
+            raise ValueError('Raise amount must be positive')
         amount_needed = (current_bet - self.current_bet) + raise_amount
         if self.balance < amount_needed:
-            raise ValueError('broke')
+            raise ValueError(f'Insufficient balance (${self.balance}) to raise by ${raise_amount}')
         
         return self.bet(amount_needed)
 

@@ -138,7 +138,29 @@ class PokerGame:
         self.deck.shuffle_deck()
         self.pot = 0
         self.community_cards = []
-    
+        # Add betting structure constants
+        self.SMALL_BLIND = 2
+        self.BIG_BLIND = 4
+        self.current_stage = 'pre-flop'
+        self.raises_this_round = 0
+        self.MAX_RAISES = 3
+        
+    def get_min_raise(self):
+        """Get minimum raise amount based on current stage."""
+        if self.current_stage in ['pre-flop', 'flop']:
+            return self.SMALL_BLIND
+        else:  # turn or river
+            return self.BIG_BLIND
+            
+    def is_raise_valid(self, raise_amount):
+        """Check if raise amount is valid for current stage."""
+        min_raise = self.get_min_raise()
+        if self.raises_this_round >= self.MAX_RAISES:
+            return False, f"Maximum number of raises ({self.MAX_RAISES}) reached for this round"
+        if raise_amount % min_raise != 0:
+            return False, f"Raise amount must be a multiple of ${min_raise}"
+        return True, None
+        
     def round(self):
         """Play a complete round of poker."""
         # Initialize round
@@ -146,11 +168,13 @@ class PokerGame:
         self.inital_deal()
         
         # Pre-flop betting
+        self.current_stage = 'pre-flop'
         print("\n=== Pre-flop betting ===")
         if self.bet_round() == 'fold':
             return
             
         # Deal flop (3 cards)
+        self.current_stage = 'flop'
         self.deck.deal_card()  # Burn card
         self.community_cards.extend([self.deck.deal_card() for _ in range(3)])
         print("\n=== Flop ===")
@@ -158,6 +182,7 @@ class PokerGame:
             return
             
         # Deal turn (1 card)
+        self.current_stage = 'turn'
         self.deck.deal_card()  # Burn card
         self.community_cards.append(self.deck.deal_card())
         print("\n=== Turn ===")
@@ -165,6 +190,7 @@ class PokerGame:
             return
             
         # Deal river (1 card)
+        self.current_stage = 'river'
         self.deck.deal_card()  # Burn card
         self.community_cards.append(self.deck.deal_card())
         print("\n=== River ===")
@@ -212,105 +238,152 @@ class PokerGame:
         self.player.hand = [self.deck.deal_card(), self.deck.deal_card()]
         self.other_player.hand = [self.deck.deal_card(), self.deck.deal_card()]
     
-
     def bet_round(self):
-        # Start with highest bet being the bigger of the current bets
+        self.raises_this_round = 0
         highest_bet = max(self.player.current_bet, self.other_player.current_bet)
+        players_acted = 0
+        action_needed = True
 
         if self.player.blind == 'small':
             turn_order = [self.player, self.other_player]
         else:
             turn_order = [self.other_player, self.player]
         
-        while True:
+        while action_needed:
             for player in turn_order:
                 if player == self.player:
                     print(f"\nPot: ${self.pot}")
                     print(f"Your hand: {', '.join(str(card) for card in self.player.hand)}")
                     print(f"Community Cards: {', '.join(str(card) for card in self.community_cards)}")
                     print(f"Current bet to match: ${highest_bet}")
+                    print(f"Your current bet: ${self.player.current_bet}")
+                    print(f"\nCurrent stage: {self.current_stage}")
+                    print(f"Minimum raise: ${self.get_min_raise()}")
+                    print(f"Raises this round: {self.raises_this_round}/{self.MAX_RAISES}")
                     
-                    action = input('What would you like to do (fold/call/check/raise)? ').lower()
+                    action = input('\nWhat would you like to do (fold/call/check/raise)? ').lower()
 
                     if action == 'fold':
-                        print('You have folded, dealer wins')
+                        print('\nYou have folded, dealer wins')
                         self.other_player.win_pot(self.pot)
                         return 'fold'
                     
                     elif action == 'check':
-                        if highest_bet > 0:
-                            print(f'You cannot check, you must match the current bet of ${highest_bet}')
+                        if highest_bet > self.player.current_bet:
+                            print(f'\nYou cannot check, you must match the current bet of ${highest_bet}')
                             continue
                         else:
                             print('You check')
+                            players_acted += 1
                             
                     elif action == 'call':
                         call_amount = highest_bet - self.player.current_bet
+                        if call_amount == 0:
+                            print('You check')
+                            players_acted += 1
+                            continue
                         try:
                             self.player.call(call_amount)
                             self.pot += call_amount
                             print(f'You called ${call_amount}')
+                            players_acted += 1
                         except ValueError:
-                            print('Not enough balance to call.')
+                            print('\nNot enough balance to call.')
                             return self.player.fold()
                             
                     elif action == 'raise':
-                        try:
-                            raise_amount = int(input('Enter raise amount: '))
-                            total_bet = highest_bet + raise_amount
-                            amount_to_add = self.player.raise_bet(highest_bet, raise_amount)
-                            self.pot += amount_to_add  # Add the actual amount bet to pot
-                            highest_bet = total_bet
-                            print(f'You raised to ${total_bet}')
-                        except ValueError as e:
-                            print('Invalid input or not enough balance.')
+                        if self.raises_this_round >= self.MAX_RAISES:
+                            print(f'\nMaximum number of raises ({self.MAX_RAISES}) reached for this round')
+                            continue
+                            
+                        min_raise = self.get_min_raise()
+                        while True:  # Keep trying until valid raise or different action
+                            print(f'\nMinimum raise amount is ${min_raise}')
+                            print(f'Your raise must be a multiple of ${min_raise}')
+                            
+                            try:
+                                raise_amount = int(input('Enter raise amount (or 0 to cancel): '))
+                                if raise_amount == 0:
+                                    print('\nRaise cancelled. Choose another action.')
+                                    break
+                                    
+                                is_valid, error_message = self.is_raise_valid(raise_amount)
+                                if not is_valid:
+                                    print(f'\n{error_message}')
+                                    continue
+                                    
+                                total_bet = highest_bet + raise_amount
+                                amount_to_add = self.player.raise_bet(highest_bet, raise_amount)
+                                self.pot += amount_to_add
+                                highest_bet = total_bet
+                                print(f'You raised by ${raise_amount}')
+                                players_acted = 1
+                                self.raises_this_round += 1
+                                break
+                            except ValueError as e:
+                                print('\nInvalid input or not enough balance.')
+                                continue
+                        if raise_amount == 0:  # If raise was cancelled, let player choose again
                             continue
                     
                     else:
-                        print('Invalid action. Please choose fold, call, check, or raise.')
+                        print('\nInvalid action. Please choose fold, call, check, or raise.')
                         continue
                 else:
                     action, new_bet = self.dealer_ai(highest_bet)
                     if action == 'fold':
                         self.player.win_pot(self.pot)
                         return 'fold'
-                    if action == 'raise':
+                    elif action == 'raise':
                         highest_bet = new_bet
+                        players_acted = 1
+                        self.raises_this_round += 1
+                    else:
+                        players_acted += 1
 
-            if (self.player.current_bet == self.other_player.current_bet):
-                print('End of betting round')
-                break
-
+            if players_acted >= 2:
+                action_needed = False
+                print('\nEnd of betting round')
 
     def dealer_ai(self, highest_bet):
-        # by default, the dealer will only fold if the current bet is too high to be reasonable
-        min_raise = 2
-        max_raise = min(self.other_player.balance, self.player.balance)
-        call_amount = highest_bet - self.other_player.current_bet
-
-        # folding logic, current bet needs to be less than half the dealer's balance
+        """AI logic for dealer's betting decisions."""
+        # Calculate the amount needed to call
+        call_amount = max(0, highest_bet - self.other_player.current_bet)
+        
+        # Get minimum raise for current stage
+        min_raise = self.get_min_raise()
+        
+        # Folding logic - fold if call amount is too high relative to balance
         if call_amount > self.other_player.balance // 2:
-            print('dealer folds, you win')
+            print('Dealer folds')
             self.other_player.fold()
             return 'fold', highest_bet
         
-        # if fold check passes, the dealer wil raise their bet 30 percent of the time
-        if call_amount >= min_raise and max_raise > min_raise and random.random() < 0.3:
-            raise_amount = random.randint(min_raise, max_raise)
-            total_bet = highest_bet + raise_amount
+        # Simple raising logic - 30% chance to raise
+        if random.random() < 0.3:
+            try:
+                amount_to_add = self.other_player.raise_bet(highest_bet, min_raise)
+                self.pot += amount_to_add
+                new_bet = highest_bet + min_raise
+                print(f'Dealer raises by ${min_raise}')
+                return 'raise', new_bet
+            except ValueError:
+                # If raise fails, fall through to call
+                pass
 
-            amount_added = self.other_player.raise_bet(highest_bet, raise_amount)
-            self.pot += amount_added
-
-            print(f'dealer raises to ${total_bet}')
-            return 'raise', total_bet
-
-
-        # if not raising or folding, will default to calling
-        self.other_player.call(call_amount)
-        self.pot += call_amount
-
-        print(f'dealer calls ${call_amount}')
+        # Call or check
+        if call_amount > 0:
+            try:
+                self.other_player.call(call_amount)
+                self.pot += call_amount
+                print(f'Dealer calls ${call_amount}')
+            except ValueError:
+                print('Dealer folds')
+                self.other_player.fold()
+                return 'fold', highest_bet
+        else:
+            print('Dealer checks')
+            
         return 'call', highest_bet
 
     def evaluate_hands(self):
@@ -321,9 +394,16 @@ class PokerGame:
         player_cards = self.player.hand + self.community_cards
         dealer_cards = self.other_player.hand + self.community_cards
         
-        # Get the rank of each hand
-        player_rank = evaluator.evaluate(player_cards)
-        dealer_rank = evaluator.evaluate(dealer_cards)
+        # Get the rank and best hand for each player
+        player_rank, player_best_hand = evaluator.evaluate(player_cards, return_best_hand=True)
+        dealer_rank, dealer_best_hand = evaluator.evaluate(dealer_cards, return_best_hand=True)
+        
+        # Display both hands
+        print(f"\nYour hand: {', '.join(str(card) for card in self.player.hand)}")
+        print(f"Dealer's hand: {', '.join(str(card) for card in self.other_player.hand)}")
+        print(f"Community cards: {', '.join(str(card) for card in self.community_cards)}")
+        print(f"\nYour best hand ({evaluator.get_hand_name(player_rank)}): {', '.join(str(card) for card in player_best_hand)}")
+        print(f"Dealer's best hand ({evaluator.get_hand_name(dealer_rank)}): {', '.join(str(card) for card in dealer_best_hand)}\n")
         
         # Determine winner
         if player_rank > dealer_rank:
@@ -340,10 +420,7 @@ class PokerGame:
             self.other_player.win_pot(split)
         
         self.pot = 0
-            
 
-    
-            
 def main():
     player1 = initialize_player()
     pokergame = PokerGame(player1)
@@ -360,12 +437,4 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-def hand_finder():
-    test_list = [1, 2, 3, 4, 5, 6, 7]
-
-    for reply in itertools.combinations(test_list, 5):
-        print(reply)
-
-
 

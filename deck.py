@@ -54,6 +54,17 @@ class Deck:
             raise IndexError('Cannot peek empty deck')
         
     def initialize_deck(self, deck_count=1):
+        """Initialize the deck with the specified number of standard 52-card decks.
+        
+        Args:
+            deck_count (int): Number of decks to use (must be positive)
+            
+        Raises:
+            ValueError: If deck_count is less than 1
+        """
+        if not isinstance(deck_count, int) or deck_count < 1:
+            raise ValueError("Deck count must be a positive integer")
+            
         for suit, value in itertools.product(self.suitList, self.valueList):
             for i in range(0, deck_count):
                 self.cards.append(Card(suit, value))
@@ -62,5 +73,14 @@ class Deck:
         random.shuffle(self.cards)
 
     def deal_card(self):
-        # removed top card in deck, and returns it
+        """Remove and return the top card from the deck.
+        
+        Returns:
+            Card: The top card from the deck
+            
+        Raises:
+            IndexError: If the deck is empty
+        """
+        if not self.cards:
+            raise IndexError("Cannot deal from an empty deck")
         return self.cards.pop()
