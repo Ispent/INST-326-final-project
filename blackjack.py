@@ -1,4 +1,5 @@
 import random
+import sys
 import itertools
 """
 notes for order of game:
@@ -120,9 +121,10 @@ class Player:
 
 # Initial bet for player
 class Gambler(Player):
-    def __init__(self, chips):
+    def __init__(self, chips, name):
         super().__init__()
         self.chips = chips
+        self.name = name
     
     def bet(self):
         while True:
@@ -152,8 +154,8 @@ class Dealer(Player):
             
 # Deals player and dealer hands
 class Blackjack:
-    def __init__(self):
-        self.players = []
+    def __init__(self, player):
+        self.players = [player, Dealer()]
         self.deck = Deck()
         self.player_bet = 0
         self.players_turn = True
@@ -331,10 +333,10 @@ class Blackjack:
                 
     # Initiates blackjack game
     def play(self):
-        print("Welcome to Blackjack")
-        player = Gambler(500)
-        dealer = Dealer()
-        self.players = [player, dealer]
+        player = self.players[0] #gambler
+        dealer = self.players[1]
+
+        print(f"Hi {player.name}! Welcome to Blackjack.")
         self.deck.fill(6)
         self.deck.shuffle()
         
@@ -371,7 +373,6 @@ class Blackjack:
                 again = input("Play again? (y/n): ").lower()
                 if again != 'y':
                     print(f"Exit with {player.chips} chips.")
-                    break
                 else:
                     continue
             dealer.show()
@@ -400,8 +401,11 @@ class Blackjack:
                 break
 
 def main():
-    game = Blackjack()
+    player = Gambler(500, "test")
+    player.name = 'test'
+    game = Blackjack(player)
     game.play()
     
 if __name__ == "__main__":
     main()
+    

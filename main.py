@@ -1,4 +1,4 @@
-from blackjack import Blackjack
+from blackjack import Blackjack, Gambler
 from slots import SlotMachine
 from poker import PokerGame, initialize_player
 
@@ -26,12 +26,13 @@ def main():
                     break
                     
         elif choice == '2':
-            blackjack = Blackjack()
-            blackjack.play(player1.balance)
-            player1.balance = blackjack.players[0].chips
+            gambler_player = Gambler(player1.balance, player1.name)
+            blackjack = Blackjack(gambler_player)
+            blackjack.play()
+            player1.balance = gambler_player.chips
             
         elif choice == '3':
-            slots = SlotMachine(player1.balance)
+            slots = SlotMachine(player1.balance, player1.name)
             slots.play()
             # Update player's balance after slots
             player1.balance = slots.points

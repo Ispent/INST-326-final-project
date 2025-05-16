@@ -12,7 +12,7 @@ class SlotMachine:
         points (int): Current number of points the player has.
         spin_cost (int): Cost in points to play a single spin.
     """
-    def __init__(self, starting_points): #will replace starting points with player
+    def __init__(self, starting_points, player_name): 
         """Initializes the SlotMachine with starting points.
         
         Args:
@@ -20,6 +20,9 @@ class SlotMachine:
         Side effects:
             Prints a welcome message to terminal.
         """
+        self.points = starting_points 
+        self.player_name = player_name
+        
         self.symbols = ['🍒', '🍋', '🔔', '💎', '🍀']
         
         #using dictionary to add values to symbols
@@ -30,12 +33,10 @@ class SlotMachine:
             '💎' : 50, 
             '🍀' : 25
             }
-        #self.player = player
         
-        self.points = starting_points #self.player.balance
         self.spin_cost = 10 #cost of each spin
         
-        print(f"🎰 Welcome to Slots 🎰")
+        print(f"Hi {player_name}! 🎰 Welcome to Slots 🎰 ")
     
     def can_play(self):
         """ Checks if the player has enough points to play.
@@ -168,5 +169,5 @@ class SlotMachine:
     
 if __name__ == "__main__":
     #creating an instance of the SlotMachine class
-    game = SlotMachine(starting_points=100) #test will be equal to the player's global points
+    game = SlotMachine(starting_points=100, player_name="Test") #test will be equal to the player's global points when ran in main
     game.play()
