@@ -38,3 +38,43 @@ The game ends when:
 - You no longer have enough points to spin
 At the end of the game, you’ll see your final balance and be returned to the main casino interface.
 
+***Blackjack***
+Overview
+This is a Python implementation of the classic casino card game Blackjack (also known as 21). 
+**The game features:
+- Single player vs dealer gameplay
+= Multiple deck shoe (6 decks)
+- Standard Blackjack rules
+- Splitting pairs
+- Doubling down
+- Proper handling of aces (soft/hard totals)
+
+**Game Rules**
+-Player places a bet (minimum 1 chip) 2:1 payouts on wins
+-Both player and dealer receive 2 cards (player's cards face up, dealer shows one)
+-Player can hit, stand, double down, or split (if applicable)
+-After player stands, dealer reveals hidden card and plays their hand
+-Winner is determined by closest to 21 without busting
+-Blackjack (Ace + 10-value card) pays 3:2
+
+**Game Features**
+Initial Setup:
+-Player starts with 500 chips
+-6-deck shoe that automatically shuffles when low
+-Standard Blackjack payouts (3:2 for natural blackjack)
+
+Player Actions:
+-Hit (H): Take another card
+-Stand (S): Keep current hand
+-Double Down (D): Double your bet and take exactly one more card
+-Split (P): Split matching cards into separate hands (up to 3 splits)
+
+Dealer Rules:
+-Dealer must hit on 16 or below
+-Dealer must stand on 17 or above
+-Dealer shows one card face up until player stands
+
+Game Ending:
+This game ends when:
+-User replies "N" to "Play again? y/n" prompt
+-User runs out of money and can no longer bet
