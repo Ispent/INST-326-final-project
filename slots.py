@@ -1,7 +1,6 @@
 """ Slot machine game"""
 import random
 import time
-import sys
 
 class SlotMachine:
     """A class representing a CLI-based slot machine game.
@@ -58,7 +57,7 @@ class SlotMachine:
             #short_points = self.spin_cost - self.player.balance
             short_points = self.spin_cost - self.points
             print(f"Sorry, you need {short_points} more points to play this game.")
-            sys.exit() #will return to main when there is a main
+            return False
     
     def start_game(self):
         """Asks user if they want to play the game.yy
@@ -88,7 +87,7 @@ class SlotMachine:
         if not self.start_game(): 
             print("Returning to main menu...")
             time.sleep(.5)
-            sys.exit() #will replace w return to main 
+            return None
             
         self.points -= self.spin_cost #subtracting spin cost from users balance 
         print(f"You now have ${self.points}.")
@@ -155,6 +154,9 @@ class SlotMachine:
         #gameplay logic
         while self.can_play(): #if can_play returns true
             spins = self.spin_reels() #spinning reel
+            
+            if spins is None: #returning to main menu
+                break
             
             #printing spin results
             print(self.results(spins)) 
